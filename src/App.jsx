@@ -1,262 +1,384 @@
 import './App.css'
 import { useState } from 'react'
-import { Phone, Mail, MapPin, ChefHat, ParkingCircle, Dumbbell, Zap, Wifi, Shirt, DoorOpen, Award, Check, Smartphone, Shield, Star } from 'lucide-react'
+import Award from 'lucide-react/dist/esm/icons/award.js'
+import BriefcaseBusiness from 'lucide-react/dist/esm/icons/briefcase-business.js'
+import Check from 'lucide-react/dist/esm/icons/check.js'
+import ChefHat from 'lucide-react/dist/esm/icons/chef-hat.js'
+import Clock from 'lucide-react/dist/esm/icons/clock.js'
+import DoorOpen from 'lucide-react/dist/esm/icons/door-open.js'
+import Dumbbell from 'lucide-react/dist/esm/icons/dumbbell.js'
+import KeyRound from 'lucide-react/dist/esm/icons/key-round.js'
+import Luggage from 'lucide-react/dist/esm/icons/luggage.js'
+import Mail from 'lucide-react/dist/esm/icons/mail.js'
+import MapPin from 'lucide-react/dist/esm/icons/map-pin.js'
+import Navigation from 'lucide-react/dist/esm/icons/navigation.js'
+import ParkingCircle from 'lucide-react/dist/esm/icons/circle-parking.js'
+import Phone from 'lucide-react/dist/esm/icons/phone.js'
+import Route from 'lucide-react/dist/esm/icons/route.js'
+import Shield from 'lucide-react/dist/esm/icons/shield.js'
+import Shirt from 'lucide-react/dist/esm/icons/shirt.js'
+import Smartphone from 'lucide-react/dist/esm/icons/smartphone.js'
+import Star from 'lucide-react/dist/esm/icons/star.js'
+import Users from 'lucide-react/dist/esm/icons/users.js'
+import Wifi from 'lucide-react/dist/esm/icons/wifi.js'
 import heroImage from './assets/JAXRS-Hero.jpg'
-import exteriorImage from './assets/JAXRS-Exterior-2.jpg'
-import orangeParkMall from './assets/OrangeParkMall.webp'
-import exteriorImage3 from './assets/JAXRS-Exterior-3.jpg'
-import hcaFlorida from './assets/HCA-Florida.jpg'
 import room1 from './assets/JAXRS-Room-Q1-1.jpg'
 import room2 from './assets/JAXRS-Room-Q1-2.jpg'
 import room3 from './assets/JAXRS-Room-2Q-1.jpg'
 import room4 from './assets/JAXRS-Room-2Q-2.jpg'
 import room5 from './assets/JAXRS-Room-2Q-3.jpg'
 import lobby1 from './assets/JAXRS-Lobby-1.jpg'
-import lobby2 from './assets/JAXRS-Lobby-2.jpg'
-import fitness from './assets/JAXRS-Fitness-1.jpg'
-import livingSpace from './assets/JAXRS-Living-1.jpg'
-import constructionWorker from './assets/construction-worker.jpg'
-import techProfessional from './assets/tech-professional.jpg'
-import corporateTrainer from './assets/corporate-trainer.jpg'
+import familyArrival from './assets/military-family-arrival.png'
+import suiteWorkspace from './assets/extended-stay-workspace.png'
 import marriottBonvoyLogo from './assets/Marriott-Bonvoy-Logo.png'
 import studioResLogo from './assets/StudioRes-logo.jpg'
 
+const marriottUrl = 'https://www.marriott.com/en-us/hotels/jaxrs-studiores-jacksonville-orange-park/overview/'
+const militaryRateUrl = 'https://www.marriott.com/event-reservations/reservation-link.mi?id=1768847508272&key=CORP&app=resvlink'
+const hotelAddress = '8045 Parramore Road, Jacksonville, FL 32244'
+const mapQuery = encodeURIComponent(`StudioRes by Marriott Jacksonville Orange Park ${hotelAddress}`)
+const directionsBase = 'https://www.google.com/maps/dir/?api=1'
+
+const installations = [
+  {
+    name: 'NAS Jacksonville',
+    label: 'Primary military access point',
+    detail: 'Route from the hotel to Naval Air Station Jacksonville for base visits, duty travel, PCS support, and family stays.',
+    query: 'Naval Air Station Jacksonville, Jacksonville, FL',
+    featured: true,
+  },
+  {
+    name: 'Naval Station Mayport',
+    label: 'Navy regional access',
+    detail: 'Useful for guests splitting time between Orange Park, south Jacksonville, and Mayport assignments.',
+    query: 'Naval Station Mayport, Jacksonville, FL',
+  },
+  {
+    name: 'Blount Island Command',
+    label: 'Marine Corps logistics access',
+    detail: 'A practical extended-stay option for defense contractors and recurring regional visits.',
+    query: 'Blount Island Command, Jacksonville, FL',
+  },
+  {
+    name: 'USCG Sector Jacksonville',
+    label: 'Coast Guard access',
+    detail: 'Convenient regional positioning for Coast Guard guests and families visiting the Jacksonville area.',
+    query: 'USCG Sector Jacksonville, Jacksonville, FL',
+  },
+  {
+    name: 'Camp Blanding JTC',
+    label: 'Training center access',
+    detail: 'A Jacksonville-area home base for longer trips connected to North Florida training and support work.',
+    query: 'Camp Blanding Joint Training Center, Starke, FL',
+  },
+  {
+    name: '125th Fighter Wing',
+    label: 'Air National Guard access',
+    detail: 'Supports broader Jacksonville military travel, including guests connected to the Air National Guard.',
+    query: '125th Fighter Wing, Jacksonville, FL',
+  },
+]
+
+const audienceCards = [
+  {
+    icon: Luggage,
+    title: 'PCS and Relocation Stays',
+    desc: 'Settle into a studio-style room with a kitchen, work area, laundry access, and room for real routines while housing plans come together.',
+  },
+  {
+    icon: Clock,
+    title: 'TDY, TAD and Training Travel',
+    desc: 'Built for more than a quick overnight: flexible extended stays, 24-hour fitness access, and easy parking after long duty days.',
+  },
+  {
+    icon: Users,
+    title: 'Military Families and Visitors',
+    desc: 'A comfortable place for family visits near NAS Jacksonville, with pet-friendly rooms and space to cook instead of eating out every meal.',
+  },
+  {
+    icon: BriefcaseBusiness,
+    title: 'Defense Contractors',
+    desc: 'A steady Orange Park base for recurring base work, project teams, vendor visits, and longer assignments across the Jacksonville military network.',
+  },
+]
+
+const amenities = [
+  { icon: ChefHat, title: 'In-Room Kitchen', desc: 'Stovetop, full-size refrigerator and microwave' },
+  { icon: ParkingCircle, title: 'Free Parking', desc: 'Complimentary on-site parking for guests' },
+  { icon: Shirt, title: 'On-Site Laundry', desc: 'Helpful for multi-week and monthly stays' },
+  { icon: Dumbbell, title: 'Fitness Center', desc: 'Keep your routine while away from home' },
+  { icon: KeyRound, title: 'Mobile Key', desc: 'Use Marriott mobile key where available' },
+  { icon: DoorOpen, title: 'Pet-Friendly', desc: '2 pets, up to 75 lbs each, with fee' },
+  { icon: Wifi, title: 'Free WiFi', desc: 'Work, stream and stay connected' },
+  { icon: Award, title: 'Marriott Bonvoy', desc: 'Earn points on eligible extended stays' },
+]
+
+const faqs = [
+  {
+    q: 'How close are you to NAS Jacksonville?',
+    a: 'StudioRes Jacksonville Orange Park is positioned off I-295 and Collins Road in south Jacksonville. Use the map and directions link on this page for the current route to NAS Jacksonville, since gate traffic and route conditions can change.',
+  },
+  {
+    q: 'Do you offer military rates?',
+    a: 'Yes. The Military Appreciation booking link is featured on this page, and you can also call the hotel at (904) 579-8150 for help with eligible rates and longer-stay questions.',
+  },
+  {
+    q: 'Is this a good setup for PCS or temporary housing?',
+    a: 'Yes. The property is designed for extended stays, with studio-style rooms, kitchens, work space, free parking, on-site laundry, and Marriott Bonvoy participation.',
+  },
+  {
+    q: 'What is included in the kitchen?',
+    a: 'Each studio includes a stovetop, full-size refrigerator, and microwave. Guests should plan to bring or purchase their own cookware and utensils.',
+  },
+  {
+    q: 'Is parking included?',
+    a: 'Yes. Marriott lists complimentary on-site parking for this hotel.',
+  },
+  {
+    q: 'What is the pet policy?',
+    a: 'Marriott lists the hotel as pet-friendly for up to 2 pets, 75 lbs maximum each, with a $150 non-refundable fee.',
+  },
+  {
+    q: 'Do you have airport or base shuttle service?',
+    a: 'Marriott lists no shuttle service for this property, so guests should plan to drive, rideshare, or arrange transportation.',
+  },
+  {
+    q: 'What are check-in and checkout times?',
+    a: 'Marriott lists check-in at 3:00 pm and checkout at 11:00 am.',
+  },
+]
+
+function directionsUrl(destination) {
+  return `${directionsBase}&origin=${encodeURIComponent(hotelAddress)}&destination=${encodeURIComponent(destination)}`
+}
+
 function App() {
   const [stayDays, setStayDays] = useState(30)
-
-  // Calculate savings based on number of days
-  const calculateSavings = (days) => {
-    const dailySavings = 750 / 30 // $750 per month = $25 per day
-    return {
-      totalSavings: Math.round(dailySavings * days),
-      withoutKitchen: Math.round((1500 / 30) * days),
-      withKitchen: Math.round((750 / 30) * days),
-      monthlySavings: 750
-    }
+  const dailySavings = 750 / 30
+  const savings = {
+    totalSavings: Math.round(dailySavings * stayDays),
+    withoutKitchen: Math.round((1500 / 30) * stayDays),
+    withKitchen: Math.round((750 / 30) * stayDays),
   }
 
-  const savings = calculateSavings(stayDays)
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col items-start">
-                <img
-                  src={studioResLogo}
-                  alt="StudioRes"
-                  className="h-10 w-auto"
-                />
-                <div className="text-xs text-gray-500 mt-1">by Marriott</div>
-              </div>
-              <div className="h-12 w-px bg-gray-300 hidden sm:block"></div>
-              <img
-                src={marriottBonvoyLogo}
-                alt="Marriott Bonvoy"
-                className="h-10 w-auto hidden sm:block"
-              />
+    <div className="site-shell">
+      <header className="topbar">
+        <div className="container topbar-inner">
+          <div className="brand-lockup">
+            <div>
+              <img src={studioResLogo} alt="StudioRes" className="studiores-logo" />
+              <div className="brand-subtitle">by Marriott</div>
             </div>
-            <div className="flex items-center gap-6">
-              <a href="tel:+19045798150" className="hidden sm:flex items-center gap-2 text-gray-700 hover:text-[#006B7D] transition-colors">
-                <Phone className="w-4 h-4" />
-                <span>(904) 579-8150</span>
-              </a>
-              <button
-                onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-6 py-2 rounded-lg font-semibold text-white transition-all hover:scale-105"
-                style={{ backgroundColor: '#006B7D' }}
-              >
-                Book Now
-              </button>
-            </div>
+            <div className="brand-divider" />
+            <img src={marriottBonvoyLogo} alt="Marriott Bonvoy" className="bonvoy-logo" />
+          </div>
+          <div className="topbar-actions">
+            <a href="tel:+19045798150" className="phone-link">
+              <Phone size={17} />
+              <span>(904) 579-8150</span>
+            </a>
+            <button onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })} className="btn btn-primary btn-small">
+              Book Now
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative h-[600px] flex items-end justify-center overflow-hidden pb-16">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="StudioRes Jacksonville Orange Park" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40"></div>
-        </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Your Home Base for<br />Jacksonville Project Work
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-200">
-              Extended-stay comfort designed for workers, military families, and professionals in the Orange Park area
+      <section className="hero">
+        <img src={heroImage} alt="StudioRes Jacksonville Orange Park exterior" className="hero-image" />
+        <div className="hero-overlay" />
+        <div className="container hero-content">
+          <div className="hero-copy">
+            <div className="eyebrow hero-eyebrow">
+              <Shield size={18} />
+              Military Appreciation Rates Available
+            </div>
+            <h1>Extended Stays Near NAS Jacksonville</h1>
+            <p>
+              A smart Orange Park home base for PCS moves, TDY travel, military families, and defense contractors working across Jacksonville.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a
-                href="https://www.marriott.com/en-us/hotels/jaxrs-studiores-jacksonville-orange-park/overview/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-8 py-4 rounded-lg font-bold text-lg text-white transition-all hover:scale-105 shadow-lg text-center"
-                style={{ backgroundColor: '#006B7D' }}
-              >
-                Book Your Extended Stay
+            <div className="hero-actions">
+              <a href={militaryRateUrl} target="_blank" rel="noopener noreferrer" className="btn btn-gold">
+                <Star size={20} />
+                Book Military Rate
               </a>
-              <button
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-white text-gray-900 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all shadow-lg"
-              >
-                Request Corporate Rates
-              </button>
+              <a href={directionsUrl('Naval Air Station Jacksonville, Jacksonville, FL')} target="_blank" rel="noopener noreferrer" className="btn btn-light">
+                <Navigation size={20} />
+                Directions to NAS Jax
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Military Appreciation Banner */}
-      <section className="py-8 bg-gradient-to-r from-[#1B3A4B] to-[#006B7D]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4 text-white">
-              <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                <Shield className="w-8 h-8 text-yellow-300" />
-              </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold">Military Appreciation Package</h2>
-                <p className="text-lg text-gray-200 mt-1">
-                  We proudly support our military families. Active duty, veterans, and their families enjoy special rates.
-                </p>
-              </div>
+      <section className="proof-strip">
+        <div className="container proof-grid">
+          <ProofItem icon={MapPin} label="Address" title="8045 Parramore Road" detail="Jacksonville, FL 32244" />
+          <ProofItem icon={Route} label="Base Access" title="NAS Jacksonville Focused" detail="Map and directions built around the NAS route" />
+          <ProofItem icon={ChefHat} label="Extended Stay" title="Kitchen, Laundry, Parking" detail="A better setup for weeks or months" />
+        </div>
+      </section>
+
+      <section className="section section-muted">
+        <div className="container">
+          <SectionIntro
+            eyebrow="Military Location Advantage"
+            title="See The Route From Orange Park To NAS Jacksonville"
+            copy="Use the live map to confirm current drive times, route options, and gate traffic before you book. The hotel is positioned for guests who need a practical south Jacksonville base."
+          />
+          <div className="map-layout">
+            <div className="map-frame">
+              <iframe
+                title="Map to StudioRes by Marriott Jacksonville Orange Park"
+                src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
-            <a
-              href="https://www.marriott.com/event-reservations/reservation-link.mi?id=1768847508272&key=CORP&app=resvlink"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-shrink-0 px-8 py-4 bg-yellow-500 text-gray-900 rounded-lg font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-105 shadow-lg flex items-center gap-2"
-            >
-              <Star className="w-5 h-5" />
-              Book Military Rate
-            </a>
+            <div className="installation-stack">
+              {installations.slice(0, 3).map((installation) => (
+                <InstallationCard key={installation.name} installation={installation} />
+              ))}
+            </div>
+          </div>
+          <div className="mini-installation-grid">
+            {installations.slice(3).map((installation) => (
+              <a key={installation.name} href={directionsUrl(installation.query)} target="_blank" rel="noopener noreferrer" className="mini-card">
+                <strong>{installation.name}</strong>
+                <span>{installation.label}</span>
+                <em>
+                  Open directions
+                  <Navigation size={15} />
+                </em>
+              </a>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Special Offer Banner */}
-      <section className="py-4" style={{ backgroundColor: '#006B7D' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <p className="text-lg md:text-xl font-semibold">
-            Special Offer: Save 15% on Extended Stays for Project Workers
-          </p>
+      <section className="section">
+        <div className="container split split-large">
+          <div>
+            <SectionIntro
+              eyebrow="Who We Serve"
+              title="Built For Military Travel That Lasts Longer Than A Weekend"
+              copy="StudioRes gives military-connected guests a steady place to land: a real kitchen, separate zones for sleeping and working, on-site laundry, free parking, and Marriott reliability."
+            />
+            <div className="audience-grid">
+              {audienceCards.map((card) => (
+                <FeatureCard key={card.title} {...card} />
+              ))}
+            </div>
+          </div>
+          <div className="image-stack">
+            <img src={familyArrival} alt="Military family arriving for an extended stay" />
+            <img src={suiteWorkspace} alt="Extended-stay suite workspace and kitchen" />
+          </div>
         </div>
       </section>
 
-      {/* Why StudioRes Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#006B7D' }}>
-              Built for Extended Stays, Not Just Overnight
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              StudioRes Jacksonville Orange Park serves the growing workforce and military community
-              in the greater Jacksonville and Clay County area
+      <section className="section section-dark">
+        <div className="container split">
+          <div>
+            <div className="eyebrow gold-text">Military Appreciation</div>
+            <h2>Full Kitchen Comfort With A Longer-Stay Budget In Mind</h2>
+            <p className="dark-copy">
+              Dining out adds up fast during a PCS transition, training assignment, or long contractor stay. A kitchen gives you more control over cost, meals, and schedule.
             </p>
+            <div className="savings-metrics">
+              <Metric label="1 Month Estimate" value="$750 saved" />
+              <Metric label="3 Months Estimate" value="$2,250 saved" />
+              <Metric label="6 Months Estimate" value="$4,500 saved" />
+            </div>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: '#006B7D' }}>
-                <ChefHat className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Save Money</h3>
-              <p className="text-gray-600 text-lg mb-4">
-                Full kitchen means real savings. Cook your own meals and save $750+ per month compared to eating out.
-              </p>
-              <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
-                <p className="text-green-800 font-semibold">Over 3 months? That's $2,250 in your pocket!</p>
-              </div>
+          <div className="calculator">
+            <h3>Calculate Food Savings</h3>
+            <label htmlFor="stay-days">How many days will you stay?</label>
+            <div className="calculator-row">
+              <input
+                id="stay-days"
+                type="number"
+                min="1"
+                value={stayDays}
+                onChange={(event) => setStayDays(Math.max(1, parseInt(event.target.value) || 1))}
+              />
+              <button onClick={() => setStayDays((prev) => prev + 1)}>+1</button>
+              <button onClick={() => setStayDays((prev) => Math.max(1, prev - 1))}>-1</button>
+              <span>days</span>
             </div>
-
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: '#006B7D' }}>
-                <DoorOpen className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">More Space</h3>
-              <p className="text-gray-600 text-lg">
-                Studio-apartment layout with distinct living, sleeping, and kitchen zones. Not cramped hotel rooms—real living space for extended stays.
-              </p>
+            <div className="calculator-total">
+              <span>Estimated savings</span>
+              <strong>${savings.totalSavings.toLocaleString()}</strong>
+              <em>over {stayDays} days</em>
             </div>
-
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: '#006B7D' }}>
-                <Award className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Long-Term Ready</h3>
-              <p className="text-gray-600 text-lg">
-                On-site laundry, free parking, 24/7 access, and pet-friendly. Everything you need for stays of weeks and months, not just nights.
-              </p>
+            <div className="calculator-comparison">
+              <Metric label="Eating out estimate" value={`$${savings.withoutKitchen.toLocaleString()}`} />
+              <Metric label="Kitchen estimate" value={`$${savings.withKitchen.toLocaleString()}`} />
             </div>
-
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 border-2 border-gray-200">
-                <img src={marriottBonvoyLogo} alt="Marriott Bonvoy" className="h-12 w-auto p-2" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Earn Rewards</h3>
-              <p className="text-gray-600 text-lg">
-                Stay with us for work, earn Marriott Bonvoy points, then use them for your dream vacation. Turn business trips into beach getaways!
-              </p>
-            </div>
+            <p>Estimate assumes $1,500/month eating out compared with $750/month using the in-room kitchen for more meals.</p>
           </div>
         </div>
       </section>
 
-      {/* Room Showcase */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#006B7D' }}>
-              Studio-Apartment Comfort at Smart Value Pricing
-            </h2>
-            <p className="text-xl text-gray-600">
-              Spacious studios with everything you need for extended stays
-            </p>
+      <section className="section">
+        <div className="container">
+          <SectionIntro
+            center
+            eyebrow="Room Setup"
+            title="Studio-Apartment Comfort Near Jacksonville Bases"
+            copy="Real hotel photos, real extended-stay function: kitchens, seating, work zones, and the Marriott name behind your stay."
+          />
+          <div className="room-feature-grid">
+            <RoomFeature image={room2} title="Cook On Your Schedule" alt="StudioRes in-room kitchen">
+              A stovetop, full-size refrigerator, microwave, and counter space help make long stays more practical.
+            </RoomFeature>
+            <RoomFeature image={room1} title="Space To Sleep, Work And Reset" alt="StudioRes living and sleeping area">
+              Studio-style layouts create more breathing room than a traditional overnight hotel room.
+            </RoomFeature>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
-              <img src={room2} alt="Full Kitchen" className="w-full h-80 object-cover" />
-              <div className="p-6 bg-gray-50">
-                <h3 className="text-xl font-bold mb-2">Full Kitchen</h3>
-                <p className="text-gray-600">Stovetop, full-size fridge, microwave, and counter space</p>
-              </div>
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
-              <img src={room1} alt="Comfortable Living Space" className="w-full h-80 object-cover" />
-              <div className="p-6 bg-gray-50">
-                <h3 className="text-xl font-bold mb-2">Comfortable Living Space</h3>
-                <p className="text-gray-600">Queen bed(s) with separate living and work areas</p>
-              </div>
-            </div>
+          <div className="room-gallery">
+            <img src={room3} alt="Two queen studio room" />
+            <img src={room4} alt="Studio room view" />
+            <img src={room5} alt="Studio layout" />
           </div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <img src={room3} alt="Two Queen Studio" className="rounded-lg shadow-md hover:shadow-xl transition-shadow w-full h-64 object-cover" />
-            <img src={room4} alt="Studio Room View" className="rounded-lg shadow-md hover:shadow-xl transition-shadow w-full h-64 object-cover" />
-            <img src={room5} alt="Studio Layout" className="rounded-lg shadow-md hover:shadow-xl transition-shadow w-full h-64 object-cover" />
+      <section className="section section-muted">
+        <div className="container">
+          <SectionIntro
+            center
+            eyebrow="Amenities"
+            title="Extended-Stay Basics That Matter"
+            copy="Corrected from Marriott's official listing: kitchen, complimentary parking, mobile key, fitness, business support, and pet-friendly rooms."
+          />
+          <div className="amenity-grid">
+            {amenities.map((amenity) => (
+              <AmenityCard key={amenity.title} {...amenity} />
+            ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-12 bg-gray-50 p-8 rounded-xl">
-            <h3 className="text-2xl font-bold mb-6">Room Features</h3>
-            <div className="grid md:grid-cols-2 gap-4">
+      <section className="section">
+        <div className="container split">
+          <img src={lobby1} alt="StudioRes lobby" className="rounded-media" />
+          <div>
+            <SectionIntro
+              eyebrow="Marriott Reliability"
+              title="A Familiar Brand For Unfamiliar Orders"
+              copy="Whether the stay is planned months ahead or shaped by changing orders, StudioRes brings Marriott-backed consistency to extended military travel in Jacksonville."
+            />
+            <div className="check-list">
               {[
-                'Full kitchen with stovetop, refrigerator & microwave',
-                'Spacious studio layout with distinct zones',
-                'Comfortable queen bed(s)',
-                'Work desk and seating area',
-                'Modern, brand-new facility',
-                'Free high-speed WiFi'
-              ].map((feature, idx) => (
-                <div key={idx} className="flex items-start gap-3">
-                  <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <span className="text-gray-700 text-lg">{feature}</span>
+                'Marriott Bonvoy participation for eligible stays',
+                'Brand-new property designed for extended-stay value',
+                'Professional hotel team available for group and longer-stay questions',
+              ].map((item) => (
+                <div key={item}>
+                  <Check size={23} />
+                  <span>{item}</span>
                 </div>
               ))}
             </div>
@@ -264,585 +386,174 @@ function App() {
         </div>
       </section>
 
-      {/* Cost Savings Section */}
-      <section className="py-20" style={{ backgroundColor: '#006B7D' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-white">
-            <h2 className="text-4xl md:text-5xl font-bold mb-8">Your Kitchen = Real Savings</h2>
-
-            {/* Interactive Calculator */}
-            <div className="mb-12 max-w-2xl mx-auto">
-              <div className="bg-white/10 backdrop-blur p-8 rounded-xl border-2 border-white/30">
-                <h3 className="text-2xl font-bold mb-4">Calculate Your Savings</h3>
-                <label className="block text-lg mb-3">How many days will you stay?</label>
-                <div className="flex items-center justify-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      min="1"
-                      value={stayDays}
-                      onChange={(e) => setStayDays(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-32 h-16 px-4 py-3 text-3xl font-bold text-white bg-white/20 border-2 border-white/40 rounded-lg text-center focus:outline-none focus:ring-4 focus:ring-white/50 focus:bg-white/30"
-                    />
-                    <div className="flex flex-col gap-1">
-                      <button
-                        onClick={() => setStayDays(prev => prev + 1)}
-                        className="w-12 h-7 bg-white/30 hover:bg-white/50 border-2 border-white/60 rounded-md flex items-center justify-center text-white font-bold text-xl transition-all hover:scale-105"
-                      >
-                        ▲
-                      </button>
-                      <button
-                        onClick={() => setStayDays(prev => Math.max(1, prev - 1))}
-                        className="w-12 h-7 bg-white/30 hover:bg-white/50 border-2 border-white/60 rounded-md flex items-center justify-center text-white font-bold text-xl transition-all hover:scale-105"
-                      >
-                        ▼
-                      </button>
-                    </div>
-                  </div>
-                  <span className="text-xl font-semibold">days</span>
-                </div>
-                <div className="mt-6 pt-6 border-t-2 border-white/30">
-                  <div className="text-yellow-300 text-lg mb-2">Your Total Savings</div>
-                  <div className="text-6xl font-bold mb-2">${savings.totalSavings.toLocaleString()}</div>
-                  <div className="text-xl opacity-90">over {stayDays} days ({(stayDays/30).toFixed(1)} months)</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <div className="bg-white/10 backdrop-blur p-8 rounded-xl">
-                <div className="text-red-300 text-lg font-semibold mb-2">Without Kitchen (All Eating Out)</div>
-                <div className="text-5xl font-bold mb-2">${savings.withoutKitchen.toLocaleString()}</div>
-                <div className="text-xl">for {stayDays} days</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur p-8 rounded-xl border-4 border-white">
-                <div className="text-green-300 text-lg font-semibold mb-2">With Kitchen (Cook at Home)</div>
-                <div className="text-5xl font-bold mb-2">${savings.withKitchen.toLocaleString()}</div>
-                <div className="text-xl">for {stayDays} days</div>
-              </div>
-            </div>
-
-            <div className="mt-12 max-w-3xl mx-auto bg-white/10 backdrop-blur p-8 rounded-xl">
-              <h3 className="text-2xl font-bold mb-6">How We Calculate Your Savings</h3>
-              <div className="text-left space-y-4 text-lg">
-                <p className="text-xl font-bold mb-4 text-yellow-300">Without Kitchen (All Eating Out):</p>
-                <div className="flex justify-between items-center pb-3 border-b border-white/20">
-                  <span>Breakfast out (30 days × $12)</span>
-                  <span className="font-bold">$360</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b border-white/20">
-                  <span>Lunch out (30 days × $15)</span>
-                  <span className="font-bold">$450</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b border-white/20">
-                  <span>Dinner out (30 days × $20)</span>
-                  <span className="font-bold">$600</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b-2 border-white/40">
-                  <span>Snacks & beverages</span>
-                  <span className="font-bold">$90</span>
-                </div>
-                <div className="flex justify-between items-center text-xl pt-2 pb-6">
-                  <span className="font-bold">Total Monthly Cost</span>
-                  <span className="font-bold text-red-300">$1,500</span>
-                </div>
-
-                <p className="text-xl font-bold mb-4 pt-6 border-t-2 border-white/40 text-green-300">With Kitchen (Cook at Home):</p>
-                <div className="flex justify-between items-center pb-3 border-b border-white/20">
-                  <span>Weekly groceries (4 weeks × $75)</span>
-                  <span className="font-bold">$300</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b-2 border-white/40">
-                  <span>Lunch out at work (30 days × $15)</span>
-                  <span className="font-bold">$450</span>
-                </div>
-                <div className="flex justify-between items-center text-xl pt-2">
-                  <span className="font-bold">Total Monthly Cost</span>
-                  <span className="font-bold text-green-300">$750</span>
-                </div>
-                <p className="text-sm mt-3 text-white/80">Cook breakfast & dinner, pack some lunches, buy lunch at work</p>
-
-                <div className="mt-6 pt-6 border-t-2 border-white bg-white/10 -mx-4 px-4 py-4 rounded-lg">
-                  <div className="flex justify-between items-center text-2xl mb-4">
-                    <span className="font-bold">Your Monthly Savings</span>
-                    <span className="font-bold text-yellow-300">$750</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div className="bg-white/10 p-3 rounded">
-                      <div className="text-sm text-white/80 mb-1">1 Month</div>
-                      <div className="text-xl font-bold">$750</div>
-                    </div>
-                    <div className="bg-white/10 p-3 rounded">
-                      <div className="text-sm text-white/80 mb-1">3 Months</div>
-                      <div className="text-xl font-bold">$2,250</div>
-                    </div>
-                    <div className="bg-white/10 p-3 rounded">
-                      <div className="text-sm text-white/80 mb-1">6 Months</div>
-                      <div className="text-xl font-bold">$4,500</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Amenities Grid */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#006B7D' }}>
-              Everything You Need for Weeks or Months
-            </h2>
-            <p className="text-xl text-gray-600">
-              Purpose-built amenities for extended-stay comfort
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            {[
-              { icon: ChefHat, title: 'Full Kitchen', desc: 'Cook like you\'re at home' },
-              { icon: ParkingCircle, title: 'Free Parking', desc: 'Complimentary on-site parking' },
-              { icon: Shirt, title: 'On-Site Laundry', desc: 'No searching for laundromats' },
-              { icon: Dumbbell, title: '24-Hour Fitness', desc: 'Work out on your schedule' },
-              { icon: Zap, title: 'EV Charging', desc: 'Electric vehicle charging stations' },
-              { icon: Award, title: 'Pet-Friendly', desc: 'Bring your companion ($150 one-time fee)' },
-              { icon: Smartphone, title: 'Mobile Key', desc: 'Access your room with your phone' },
-              { icon: Wifi, title: 'Marriott Bonvoy', desc: 'Earn points on extended stays' }
-            ].map((amenity, idx) => (
-              <div key={idx} className="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow text-center">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#006B7D' }}>
-                  <amenity.icon className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">{amenity.title}</h3>
-                <p className="text-gray-600 text-sm">{amenity.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Location Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#006B7D' }}>
-                Perfect Location in Orange Park
-              </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Convenient access to NAS Jacksonville, major employers, and everything south Jacksonville has to offer
-              </p>
-
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-4">
-                  <MapPin className="w-6 h-6 text-[#006B7D] flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="font-bold text-lg">8045 Parramore Road</div>
-                    <div className="text-gray-600">Jacksonville, Florida 32244</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Phone className="w-6 h-6 text-[#006B7D] flex-shrink-0 mt-1" />
-                  <div>
-                    <a href="tel:+19045798150" className="font-bold text-lg hover:text-[#006B7D]">(904) 579-8150</a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-xl shadow-md">
-                <h3 className="font-bold text-xl mb-4">Nearby</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-green-600" />
-                    Minutes from Orange Park Mall & shopping
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-green-600" />
-                    Near HCA Florida Orange Park Hospital
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-green-600" />
-                    Easy access off I-295 and Collins Road
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-green-600" />
-                    30 minutes to Jacksonville Beach
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-green-600" />
-                    Close to NAS Jacksonville & military installations
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <img src={orangeParkMall} alt="Orange Park Mall - Minutes Away" className="rounded-xl shadow-lg w-full" />
-              <img src={hcaFlorida} alt="HCA Florida Orange Park Hospital - Nearby" className="rounded-xl shadow-lg w-full" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Use Cases Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#006B7D' }}>
-              Designed for Project Workers Like You
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
-              <div className="h-64 overflow-hidden">
-                <img src={constructionWorker} alt="Construction Professional" className="w-full h-full object-cover" />
-              </div>
-              <div className="p-8 bg-gradient-to-br from-blue-50 to-white">
-                <h3 className="text-2xl font-bold mb-4" style={{ color: '#006B7D' }}>Construction Professional</h3>
-                <p className="text-gray-700">
-                  Working on a project in the Jacksonville area? Our full kitchens, free parking for your work truck,
-                  and on-site laundry make extended stays comfortable and affordable.
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
-              <div className="h-64 overflow-hidden">
-                <img src={techProfessional} alt="Tech Professional" className="w-full h-full object-cover" />
-              </div>
-              <div className="p-8 bg-gradient-to-br from-purple-50 to-white">
-                <h3 className="text-2xl font-bold mb-4" style={{ color: '#006B7D' }}>Tech Professional</h3>
-                <p className="text-gray-700">
-                  Relocating to the Jacksonville area? Stay with us for 30-90 days while you find your
-                  permanent home. Modern facilities, workspace, and Marriott rewards included.
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
-              <div className="h-64 overflow-hidden">
-                <img src={corporateTrainer} alt="Corporate Trainer" className="w-full h-full object-cover" />
-              </div>
-              <div className="p-8 bg-gradient-to-br from-green-50 to-white">
-                <h3 className="text-2xl font-bold mb-4" style={{ color: '#006B7D' }}>Corporate Trainer</h3>
-                <p className="text-gray-700">
-                  Managing teams or making recurring visits? Our studio-apartment layout and smart value
-                  pricing make it easy on your budget and your routine.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Marriott Trust Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <img src={lobby1} alt="Modern Lobby" className="rounded-xl shadow-lg" />
-            <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#006B7D' }}>
-                The Marriott Name You Trust
-              </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                StudioRes is Marriott's newest extended-stay brand, bringing you the quality and
-                consistency you expect with smart value pricing.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="font-bold text-lg">Marriott Bonvoy Rewards</div>
-                    <div className="text-gray-600">Earn points on extended stays for future travel</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="font-bold text-lg">Brand-New Property</div>
-                    <div className="text-gray-600">Modern, clean, and purpose-built for extended stays</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="font-bold text-lg">Professional Management</div>
-                    <div className="text-gray-600">Consistent quality and reliable service</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Business Access Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#006B7D' }}>
-              Business Access by Marriott Bonvoy™
-            </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-4">
-              A comprehensive online travel program that combines an expanded booking experience with the benefits and rewards that are only available through Marriott Bonvoy®'s award-winning travel program.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
-            <div className="rounded-xl overflow-hidden shadow-xl">
-              <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.youtube.com/embed/dI1GD2XNqRQ"
-                  title="Business Access by Marriott Bonvoy Demo Video"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-3xl font-bold mb-6" style={{ color: '#006B7D' }}>
-                Perfect for Small to Medium-Sized Businesses
-              </h3>
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-4">
-                  <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="font-bold text-lg">Discounted Hotel Rates</div>
-                    <div className="text-gray-600">Book Marriott Bonvoy hotels at special business rates</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="font-bold text-lg">Complete Travel Solutions</div>
-                    <div className="text-gray-600">Book flights, rail, and rental cars in one easy-to-use platform</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="font-bold text-lg">Expense Management</div>
-                    <div className="text-gray-600">Access live travel data and streamline business expenses</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="font-bold text-lg">Earn Marriott Bonvoy Points</div>
-                    <div className="text-gray-600">Rewards on all your business travel bookings</div>
-                  </div>
-                </div>
-              </div>
-
-              <a
-                href="https://mgscloud.marriott.com/mgs/marrdocs/mgs/common/salesmktgrevmgmt/toolsresources/businessaccess/index.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-8 py-4 rounded-lg font-bold text-lg text-white transition-all hover:scale-105 shadow-lg"
-                style={{ backgroundColor: '#006B7D' }}
-              >
-                Sign Up for Business Access
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Booking Section */}
-      <section id="booking" className="py-20 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#006B7D' }}>
-            Ready to Book Your Extended Stay?
-          </h2>
-          <p className="text-xl text-gray-600 mb-12">
-            Special rates available for project workers, military families, and corporate bookings
+      <section id="booking" className="section booking-section">
+        <div className="container booking-container">
+          <h2>Book Your Military-Friendly Extended Stay</h2>
+          <p>
+            Use the Military Appreciation link, book through Marriott, or contact the hotel for group, government, contractor, and longer-stay questions.
           </p>
-
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div className="bg-gray-50 p-8 rounded-xl shadow-lg">
-              <div className="text-2xl font-bold mb-4" style={{ color: '#FF6B35' }}>
-                15% Off Extended Stays
-              </div>
-              <p className="text-gray-600 mb-6">
-                Special discount for project workers staying 7 days or more
-              </p>
-              <a
-                href="https://www.marriott.com/en-us/hotels/jaxrs-studiores-jacksonville-orange-park/overview/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block w-full px-12 py-4 rounded-lg font-bold text-lg text-white transition-all hover:scale-105 shadow-lg"
-                style={{ backgroundColor: '#006B7D' }}
-              >
-                Book Now
-              </a>
-            </div>
-
-            <div className="bg-gradient-to-br from-[#1B3A4B] to-[#006B7D] p-8 rounded-xl shadow-lg text-white">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Shield className="w-7 h-7 text-yellow-300" />
-                <div className="text-2xl font-bold text-yellow-300">
-                  Military Appreciation
-                </div>
-              </div>
-              <p className="text-gray-200 mb-6">
-                Special rates for active duty, veterans, and military families
-              </p>
-              <a
-                href="https://www.marriott.com/event-reservations/reservation-link.mi?id=1768847508272&key=CORP&app=resvlink"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block w-full px-12 py-4 bg-yellow-500 text-gray-900 rounded-lg font-bold text-lg transition-all hover:scale-105 hover:bg-yellow-400 shadow-lg"
-              >
+          <div className="booking-grid">
+            <BookingCard icon={Shield} title="Military Appreciation" copy="Special booking path for active duty, veterans, and military families.">
+              <a href={militaryRateUrl} target="_blank" rel="noopener noreferrer" className="btn btn-gold">
+                <Star size={19} />
                 Book Military Rate
               </a>
-            </div>
+            </BookingCard>
+            <BookingCard icon={Smartphone} title="Marriott Booking" copy="Book direct, confirm amenities, and manage eligible Marriott Bonvoy details.">
+              <a href={marriottUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+                Book on Marriott.com
+              </a>
+            </BookingCard>
           </div>
-
-          <div id="contact" className="grid md:grid-cols-2 gap-6 mt-8">
-            <div className="bg-white p-6 rounded-xl shadow-md border-2 border-gray-200">
-              <h3 className="font-bold text-xl mb-4">Corporate & Group Rates</h3>
-              <p className="text-gray-600 mb-4">
-                Need multiple rooms or recurring stays? Contact us for special corporate pricing.
-              </p>
-              <a
-                href="tel:+19045798150"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-              >
-                <Phone className="w-5 h-5" />
-                Call (904) 579-8150
-              </a>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow-md border-2 border-gray-200">
-              <h3 className="font-bold text-xl mb-4">Questions?</h3>
-              <p className="text-gray-600 mb-4">
-                Our team is here to help with your extended-stay needs and special requests.
-              </p>
-              <a
-                href="mailto:sales@hotelmc.net"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-              >
-                <Mail className="w-5 h-5" />
-                Email Us
-              </a>
-            </div>
+          <div id="contact" className="contact-grid">
+            <a href="tel:+19045798150">
+              <Phone size={29} />
+              <strong>Call The Hotel</strong>
+              <span>(904) 579-8150</span>
+            </a>
+            <a href="mailto:sales@hotelmc.net">
+              <Mail size={29} />
+              <strong>Email Sales</strong>
+              <span>sales@hotelmc.net</span>
+            </a>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold mb-12 text-center" style={{ color: '#006B7D' }}>
-            Common Questions from Project Workers
-          </h2>
-
-          <div className="space-y-6">
-            {[
-              {
-                q: "What's included in the kitchen?",
-                a: "Each studio includes a stovetop, full-size refrigerator, and microwave. Please note that guests bring their own cookware and utensils to prepare meals."
-              },
-              {
-                q: "Is parking really free?",
-                a: "Yes! We offer complimentary on-site parking for all guests, including long-term parking for work vehicles."
-              },
-              {
-                q: "What's the pet policy?",
-                a: "We're pet-friendly! There's a one-time $150 fee per stay (not per night). You can bring up to 2 pets, maximum 75 lbs each."
-              },
-              {
-                q: "Do you offer weekly or monthly rates?",
-                a: "Yes! We specialize in extended stays and offer special rates for longer stays. Call us at (904) 579-8150 for extended-stay pricing."
-              },
-              {
-                q: "Is laundry included?",
-                a: "We have on-site laundry facilities available 24/7. There's a small fee per load, but it's much more convenient than finding external laundromats."
-              },
-              {
-                q: "Can I earn Marriott points?",
-                a: "Absolutely! StudioRes is part of Marriott Bonvoy, so you'll earn points on your stay that you can use for future travel."
-              },
-              {
-                q: "Do you accommodate shift workers?",
-                a: "Yes! We have 24-hour access to all facilities including the fitness center, and our design is perfect for guests on various work schedules."
-              },
-              {
-                q: "Do you offer military rates?",
-                a: "Yes! We proudly offer a Military Appreciation package with special rates for active duty service members, veterans, and their families. Use our Military Appreciation booking link or call us at (904) 579-8150 for details."
-              },
-              {
-                q: "How close are you to major employers and attractions?",
-                a: "We're conveniently located off I-295 and Collins Road in the Orange Park area of Jacksonville. We're minutes from Orange Park Mall, HCA Florida Orange Park Hospital, and River Road Historic District. Jacksonville Beach is about a 30-minute drive. We're also close to NAS Jacksonville and other military installations."
-              }
-            ].map((faq, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-xl shadow-md">
-                <h3 className="font-bold text-lg mb-3" style={{ color: '#006B7D' }}>{faq.q}</h3>
-                <p className="text-gray-600">{faq.a}</p>
+      <section className="section section-muted">
+        <div className="container faq-container">
+          <h2>Military Stay Questions</h2>
+          <div className="faq-list">
+            {faqs.map((faq) => (
+              <div key={faq.q} className="faq-card">
+                <h3>{faq.q}</h3>
+                <p>{faq.a}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <div className="text-2xl font-bold mb-4" style={{ color: '#006B7D' }}>STUDIORES</div>
-              <p className="text-gray-400 mb-4">by Marriott</p>
-              <p className="text-gray-400">
-                Smart Stays. Real Comfort.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-lg mb-4">Contact</h3>
-              <div className="space-y-2 text-gray-400">
-                <p>8045 Parramore Road</p>
-                <p>Jacksonville, FL 32244</p>
-                <p className="mt-4">
-                  <a href="tel:+19045798150" className="hover:text-white transition-colors">
-                    (904) 579-8150
-                  </a>
-                </p>
-                <p>
-                  <a href="mailto:sales@hotelmc.net" className="hover:text-white transition-colors">
-                    sales@hotelmc.net
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-lg mb-4">Quick Links</h3>
-              <div className="space-y-2">
-                <a href="#booking" className="block text-gray-400 hover:text-white transition-colors">Book Now</a>
-                <a href="https://www.marriott.com/en-us/hotels/jaxrs-studiores-jacksonville-orange-park/overview/" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-white transition-colors">
-                  Book on Marriott.com
-                </a>
-                <a href="https://www.marriott.com/event-reservations/reservation-link.mi?id=1768847508272&key=CORP&app=resvlink" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-white transition-colors">
-                  Military Appreciation Rate
-                </a>
-                <a href="https://www.marriott.com/loyalty.mi" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-white transition-colors">
-                  Marriott Bonvoy
-                </a>
-              </div>
-            </div>
+      <footer className="footer">
+        <div className="container footer-grid">
+          <div>
+            <img src={studioResLogo} alt="StudioRes" className="footer-logo" />
+            <p>by Marriott</p>
+            <p>Extended-stay comfort near NAS Jacksonville.</p>
           </div>
-
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2026 StudioRes Jacksonville Orange Park. Part of Marriott International, Inc.</p>
+          <div>
+            <h3>Contact</h3>
+            <p>8045 Parramore Road</p>
+            <p>Jacksonville, FL 32244</p>
+            <a href="tel:+19045798150">(904) 579-8150</a>
+            <a href="mailto:sales@hotelmc.net">sales@hotelmc.net</a>
+          </div>
+          <div>
+            <h3>Quick Links</h3>
+            <a href="#booking">Book Now</a>
+            <a href={marriottUrl} target="_blank" rel="noopener noreferrer">Book on Marriott.com</a>
+            <a href={militaryRateUrl} target="_blank" rel="noopener noreferrer">Military Appreciation Rate</a>
+            <a href={directionsUrl('Naval Air Station Jacksonville, Jacksonville, FL')} target="_blank" rel="noopener noreferrer">Directions to NAS Jacksonville</a>
           </div>
         </div>
+        <div className="container footer-bottom">
+          <p>&copy; 2026 StudioRes Jacksonville Orange Park. Part of Marriott International, Inc.</p>
+        </div>
       </footer>
+    </div>
+  )
+}
+
+function SectionIntro({ eyebrow, title, copy, center = false }) {
+  return (
+    <div className={`section-intro ${center ? 'centered' : ''}`}>
+      <div className="eyebrow">{eyebrow}</div>
+      <h2>{title}</h2>
+      <p>{copy}</p>
+    </div>
+  )
+}
+
+function ProofItem({ icon: Icon, label, title, detail }) {
+  return (
+    <div className="proof-item">
+      <Icon size={30} />
+      <div>
+        <span>{label}</span>
+        <strong>{title}</strong>
+        <p>{detail}</p>
+      </div>
+    </div>
+  )
+}
+
+function InstallationCard({ installation }) {
+  return (
+    <div className={`installation-card ${installation.featured ? 'featured' : ''}`}>
+      <div className="installation-title-row">
+        <h3>{installation.name}</h3>
+        {installation.featured && <span>Primary</span>}
+      </div>
+      <strong>{installation.label}</strong>
+      <p>{installation.detail}</p>
+      <a href={directionsUrl(installation.query)} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-compact">
+        <Navigation size={17} />
+        Open Directions
+      </a>
+    </div>
+  )
+}
+
+function FeatureCard({ icon: Icon, title, desc }) {
+  return (
+    <div className="feature-card">
+      <Icon size={34} />
+      <h3>{title}</h3>
+      <p>{desc}</p>
+    </div>
+  )
+}
+
+function Metric({ label, value }) {
+  return (
+    <div className="metric">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  )
+}
+
+function RoomFeature({ image, alt, title, children }) {
+  return (
+    <div className="room-feature">
+      <img src={image} alt={alt} />
+      <div>
+        <h3>{title}</h3>
+        <p>{children}</p>
+      </div>
+    </div>
+  )
+}
+
+function AmenityCard({ icon: Icon, title, desc }) {
+  return (
+    <div className="amenity-card">
+      <div className="amenity-icon">
+        <Icon size={29} />
+      </div>
+      <h3>{title}</h3>
+      <p>{desc}</p>
+    </div>
+  )
+}
+
+function BookingCard({ icon: Icon, title, copy, children }) {
+  return (
+    <div className="booking-card">
+      <Icon size={42} />
+      <h3>{title}</h3>
+      <p>{copy}</p>
+      {children}
     </div>
   )
 }
